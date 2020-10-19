@@ -3,14 +3,21 @@ package ru.testfield.tacker;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Tacker<T> {
 
+    private final int DEFAULT_CAPACITY = 10000;
+
     private final Lock getPackLock = new ReentrantLock();
 
     private final BlockingQueue<T> blockingQueue;
+
+    public Tacker() {
+        this.blockingQueue = new LinkedBlockingDeque<>(DEFAULT_CAPACITY);
+    }
 
     public Tacker(BlockingQueue<T> blockingQueue) {
         this.blockingQueue = blockingQueue;

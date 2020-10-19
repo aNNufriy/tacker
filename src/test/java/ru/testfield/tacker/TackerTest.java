@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class TackerTest {
+class TackerTest extends AbstractTackerTest {
 
     @Test
     void addTaskGetPackTest() throws InterruptedException, ExecutionException {
@@ -19,15 +19,5 @@ class TackerTest {
             future.get();
         }
         assertEquals(capacity,counter);
-    }
-
-    private List<Future<?>> addRandomTasks(Tacker<String> tacker, int capacity) {
-        Runnable callableTask = ()->tacker.addValue(UUID.randomUUID().toString());
-        ExecutorService executorService = Executors.newWorkStealingPool();
-        var futures = new ArrayList<Future<?>>();
-        for(int i=0; i<capacity; i++) {
-            futures.add(executorService.submit(callableTask));
-        }
-        return futures;
     }
 }
