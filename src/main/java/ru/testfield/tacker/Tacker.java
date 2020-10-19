@@ -1,14 +1,14 @@
 package ru.testfield.tacker;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Tacker<T> {
 
-    private final Lock retrieveLock = new ReentrantLock();
+    private final Lock getPackLock = new ReentrantLock();
 
     private final BlockingQueue<T> blockingQueue;
 
@@ -24,19 +24,21 @@ public class Tacker<T> {
         }
     }
 
-    public List<T> getPack() {
-        List<T> pack = new ArrayList<>(blockingQueue.size());
-        retrieveLock.lock();
+    public Collection<T> getPack() {
+        getPackLock.lock();
+        int packSize = blockingQueue.size();
+        Collection<T> pack = new ArrayList<>(packSize);
         try {
-            while(blockingQueue.size()>0){
+            for (int i=0; i<packSize; i++) {
                 try {
                     pack.add(blockingQueue.take());
                 } catch (InterruptedException e) {
+                    System.out.println("Unable to retrieve value from blocking queue: interrupted");
                     break;
                 }
             }
         }finally {
-            retrieveLock.unlock();
+            getPackLock.unlock();
         }
         return pack;
     }
